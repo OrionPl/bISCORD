@@ -17,14 +17,14 @@ public:
 	Server(SOCKET* serverSock);
 	void OnConnect(SOCKET* clientSock, sockaddr_in* client);
 	void OnDisconnect(User* user);
-	
+	void AddUser(User* user);
+
 	std::vector<User*>* GetUsers() { return &users; };
 
 private:
 	SOCKET* serverSocket;
 	std::vector<User*> users;
 
-	void AddUser(SOCKET* socket, std::string name);
 	void SendToAllUsers(std::string message);
 };
 #endif

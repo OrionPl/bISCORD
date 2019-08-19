@@ -2,11 +2,13 @@
 #include <WS2tcpip.h>
 #include <string>
 
+#include "Utilities/Helper.h"
+
 #pragma comment (lib, "ws2_32.lib")
 
 int main()
 {
-	std::string serverIp = "127.0.0.1";
+	std::string serverIp = "127.0.0.1"; //external 89.78.12.9
 	int port = 8008;
 
 	//WEENSOCK
@@ -47,19 +49,32 @@ int main()
 		return 0;
 	}
 
+	std::cout << "Connected to server" << std::endl << std::endl;
+
 	char buffer[4096];
 	std::string userInput;
 
-	std::string userInfo = "userInfo OriginalOrion";
+	std::cout << "Write your nickname" << std::endl;
+
+	std::string nick;
+	std::cin >> nick;
+
+	std::string userInfo = "userInfo " + nick;
 	send(clientSock, userInfo.c_str(), userInfo.size() + 1, 0);
+
+	std::cout << "Set nickname to " << nick << std::endl << std::endl;
+
+	Helper help;
 
 	do 
 	{
 		std::cout << "> ";
-		getline(std::cin, userInput);
+		std::cin >> userInput;
 
 		if (userInput.size() > 0)
 		{
+			userInput = "msg " + userInput;
+
 			int sendResult = send(clientSock, userInput.c_str(), userInput.size() + 1, 0);
 
 			if (sendResult != SOCKET_ERROR)
@@ -67,10 +82,23 @@ int main()
 				ZeroMemory(buffer, 4096);
 				
 				int bytesReceived = recv(clientSock, buffer, 4096, 0);
+				std::string received = std::string(buffer, 0, bytesReceived);
 
 				if (bytesReceived > 0)
 				{
-					std::cout << "SERVER> " << std::string(buffer, 0, bytesReceived) << std::endl;
+					if (help.StringStartsWith(received, "msgfrom"))
+					{
+						received = help.ShortenStringFromLeft(received, 8);
+						std::string name = help.GetStringUntil(received, "###");
+						std::string msg = help.ShortenStringFromLeft(received, name.length() + 3);
+
+						if (name != nick)
+						std::cout << name << "> " << msg << std::endl;
+					}
+					else
+					{
+						std::cout << "SERVER> " << received << std::endl;
+					}
 				}
 				else
 				{

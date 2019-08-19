@@ -7,6 +7,7 @@ class Server;
 
 #include <iostream>
 #include <string>
+#include <future>
 #include <WS2tcpip.h>
 
 #include "Utilities/Helper.h"

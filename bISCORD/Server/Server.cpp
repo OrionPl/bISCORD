@@ -20,17 +20,26 @@ void Server::OnConnect(SOCKET* clientSock, sockaddr_in* client)
 		std::cout << host << " connected to port " << ntohs(client->sin_port) << std::endl;
 	}
 
-	Server::AddUser(clientSock, host);
+	new User(clientSock, host, this);
 }
 
 void Server::OnDisconnect(User* user)
 {
 	std::cout << user->GetName() << " disconnected" << std::endl;
-	delete user;
+	
+	for (int i = 0; i < users.size(); i++)
+	{
+		if (users[i]->GetName() == user->GetName())
+		{
+			users.erase(users.begin() + i);
+		}
+	}
+
+	users.shrink_to_fit();
 
 	if (users.empty())
 	{
-		std::cout << "Noone is connected" << std::endl;
+		std::cout << std::endl << "Noone is connected" << std::endl;
 	}
 	else
 	{
@@ -41,9 +50,9 @@ void Server::OnDisconnect(User* user)
 	}
 }
 
-void Server::AddUser(SOCKET* socket, std::string name)
+void Server::AddUser(User* user)
 {
-	users.push_back(new User(socket, name, this));
+	users.push_back(user);
 }
 
 

@@ -7,7 +7,7 @@ User::User(SOCKET* Socket, std::string Name, Server* _server)
 	name = Name;
 	server = _server;
 
-	Receive();
+	auto receiveAsync = std::async(std::launch::async, &User::Receive, this);
 }
 
 void User::Receive()
@@ -70,6 +70,7 @@ void User::SetUserInfo(std::string msg)
 		name = msg;
 
 		userInfoDone = true;
+		server->AddUser(this);
 	}
 }
 

@@ -127,7 +127,7 @@ int main()
 {
 	InitializeClient();
 	std::thread receiveThread (Receive);
-	receiveThread.detach;
+	receiveThread.detach();
 	Send();
 
 	closesocket(clientSock);

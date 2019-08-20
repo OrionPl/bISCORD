@@ -31,7 +31,7 @@ void Receive()
 				std::string name = help.GetStringUntil(received, "###");
 				std::string msg = help.ShortenStringFromLeft(received, name.length() + 3);
 
-				if (name != nick)
+				//if (name != nick)
 					std::cout << name << "> " << msg << std::endl;
 			}
 			else

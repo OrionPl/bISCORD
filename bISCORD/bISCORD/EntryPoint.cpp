@@ -1,5 +1,5 @@
 #include <iostream> 
-#include <future>
+#include <thread>
 #include <WS2tcpip.h>
 #include <string>
 
@@ -126,7 +126,8 @@ void InitializeClient()
 int main()
 {
 	InitializeClient();
-	auto receiveAsync = std::async(std::launch::async, Receive);
+	std::thread receiveThread (Receive);
+	receiveThread.detach;
 	Send();
 
 	closesocket(clientSock);
